@@ -104,5 +104,10 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": ["./src/**/*.ts", "./**/*.ts"],
+  "exclude": [
+    "node_modules", // node_modules 디렉토리 제외
+    "dist" // dist 디렉토리 제외
+  ]
 }

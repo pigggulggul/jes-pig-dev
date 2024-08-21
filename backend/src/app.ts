@@ -5,6 +5,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const app = express();
 
+// 라우팅
+const route = require("./routes");
+
 dotenv.config();
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 app.use(bodyParser.json());
@@ -12,8 +15,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.get("/", (req, res) => {
+app.get("/", (req: any, res: any) => {
+  console.log(req);
   res.sendFile(path.join(__dirname, "/frontend/dist/index.html"));
 });
+app.use("/", route);
 
 module.exports = app;

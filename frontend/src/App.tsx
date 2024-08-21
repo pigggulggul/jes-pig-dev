@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { login } from "./api/user";
+import { loginUser } from "./types/type";
 
 function App() {
   const [count, setCount] = useState(0);
+  const idRef = useRef<HTMLInputElement>(null);
+  const pwRef = useRef<HTMLInputElement>(null);
+  const idRef2 = useRef<HTMLInputElement>(null);
+  const pwRef2 = useRef<HTMLInputElement>(null);
 
   return (
     <>
@@ -31,18 +37,50 @@ function App() {
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center">
           <p className="me-2">ID</p>
-          <input type="text" className="px-2 bg-slate-200 my-2" />
+          <input ref={idRef} type="text" className="px-2 bg-slate-200 my-2" />
         </div>
         <div className="flex items-center">
           <p className="me-2">PW</p>
-          <input type="text" className="px-2 bg-slate-200 my-2" />
+          <input ref={pwRef} type="text" className="px-2 bg-slate-200 my-2" />
         </div>
-        <div className=" bg-slate-300 px-4 py-2 rounded-md cursor-pointer">
-          등록
+        <div
+          onClick={submitLogin}
+          className=" bg-slate-300 px-4 py-2 rounded-md cursor-pointer"
+        >
+          로그인
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex items-center">
+          <p className="me-2">ID</p>
+          <input ref={idRef2} type="text" className="px-2 bg-slate-200 my-2" />
+        </div>
+        <div className="flex items-center">
+          <p className="me-2">PW</p>
+          <input ref={pwRef2} type="text" className="px-2 bg-slate-200 my-2" />
+        </div>
+        <div
+          onClick={registerUser}
+          className=" bg-slate-300 px-4 py-2 rounded-md cursor-pointer"
+        >
+          회원가입
         </div>
       </div>
     </>
   );
+  async function submitLogin() {
+    const id = idRef.current?.value || "";
+    const pw = pwRef.current?.value || "";
+    const user: loginUser = { userId: id, userPassword: pw };
+    if (id?.length === 0 || pw?.length === 0) {
+      alert("정보를 제대로 입력해주세요");
+    } else {
+      await login(user).then((res) => {
+        console.log(res.data);
+      });
+    }
+  }
+  function registerUser() {}
 }
 
 export default App;
