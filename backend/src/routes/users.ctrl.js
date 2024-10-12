@@ -29,7 +29,7 @@ const process = {
       );
     } else
       console.log(
-        `POST /login 200 Response: "success: ${response.success}, msg: ${response.msg}"`
+        `POST /login 200 Response: "success: ${response.success}, msg: ${response.msg} token: ${response.token}"`
       );
     return res.json(response);
   },

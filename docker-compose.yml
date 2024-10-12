@@ -1,0 +1,69 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    volumes:
+      - mysql_data:/var/lib/mysql # MySQL 데이터를 영구 저장할 볼륨 설정
+    ports:
+      - "3306:3306" # MySQL 기본 포트 3306을 호스트에 노출
+    env_file: # 환경 변수를 .env 파일에서 불러옴
+      - ./backend/.env
+    restart: unless-stopped
+    networks:
+      - backend-network # backend-network 네트워크에 연결
+
+  backend:
+    build:
+      context: ./backend # 백엔드의 Dockerfile이 위치한 경로
+      dockerfile: Dockerfile # 사용할 Dockerfile
+    working_dir: /app # 컨테이너 내에서 작업할 디렉토리
+    volumes:
+      - ./backend:/app # 호스트의 backend 디렉토리를 컨테이너의 /app에 연결
+      - /app/node_modules # node_modules는 호스트와 공유하지 않도록 설정 (컨테이너 내부에서만 관리)
+    ports:
+      - "5000:5000" # 백엔드 서버의 포트 3000을 호스트에 노출
+    env_file:
+      - ./backend/.env # 백엔드의 환경 변수 파일 (.env) 설정
+    command: bash -c "npm install && npm start" # npm install 후 백엔드 서버 시작
+    depends_on:
+      - mysql # backend 서비스는 mysql 서비스가 시작된 후 실행
+    networks:
+      - backend-network # backend-network 네트워크에 연결
+
+  # frontend:
+  #   build:
+  #     context: . # 프론트엔드의 Dockerfile이 위치한 경로
+  #     dockerfile: Dockerfile # 사용할 Dockerfile
+  #   ports:
+  #     - "3000:80" # Nginx가 80 포트에서 동작하므로 호스트의 3000번 포트와 매핑
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - backend-network
+
+  nginx:
+    build:
+      context: . # 프론트엔드의 Dockerfile이 위치한 경로
+      dockerfile: ./frontend/Dockerfile # 사용할 Dockerfile
+    container_name: nginx-container
+    restart: always
+    ports:
+      - "80:80" # HTTP 포트
+      - "443:443" # HTTPS 포트
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf # Nginx 설정 파일 매핑
+      - ./certs:/etc/nginx/certs # SSL 인증서 매핑
+    depends_on:
+      - backend
+    networks:
+      - backend-network
+
+# 네트워크 설정: backend-network라는 이름의 브리지 네트워크를 정의
+networks:
+  backend-network:
+    driver: bridge
+
+# MySQL 데이터를 호스트에 영구 저장하기 위한 볼륨 설정
+volumes:
+  mysql_data:
