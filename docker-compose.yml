@@ -51,21 +51,20 @@ services:
       - "80:80" # HTTP 포트
       - "443:443" # HTTPS 포트
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf # Nginx 설정 파일 매핑
       - ./data/certbot/conf:/etc/letsencrypt #공유 볼륨
       - ./data/certbot/www:/var/www/certbot #공유 볼륨
+      - ./nginx/logs:/var/log/nginx
     depends_on:
       - backend
     networks:
       - backend-network
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    command: 'nginx -g "daemon off;" -c /etc/nginx/nginx.conf'
 
   certbot:
     image: certbot/certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 # 네트워크 설정: backend-network라는 이름의 브리지 네트워크를 정의
 networks:

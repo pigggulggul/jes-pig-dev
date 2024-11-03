@@ -24,11 +24,13 @@ RUN ls -l /app/dist
 # Production 스테이지로 Nginx 사용
 FROM nginx:alpine
 
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
 # 빌드된 정적 파일을 Nginx의 기본 경로로 복사
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # Nginx 기본 포트 노출
-EXPOSE 80
+EXPOSE 80 443
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
