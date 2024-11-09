@@ -12,8 +12,8 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
-                sh 'docker-compose down'
-                sh 'docker-compose up -d --build'
+                sh 'docker compose down'
+                sh 'docker compose up -d --build'
             }
         }
     }
