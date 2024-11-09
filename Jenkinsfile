@@ -9,16 +9,11 @@ pipeline {
             }
         }
 
-        stage('Build and Deploy with Docker Compose') {
+        stage('Deploy with Docker Compose') {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
-                script {
-			docker.image('docker:latest').inside {
-			sh 'docker --version' //Docker 명령어 사용 가능
-			sh 'docker-compose down'
-			sh 'docker-compose up -d --build'
-			}
-		}
+		sh 'docker-compose down'
+		sh 'docker-compose up -d --build'
             }
         }
     }

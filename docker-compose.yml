@@ -67,7 +67,7 @@ services:
       - ./data/certbot/www:/var/www/certbot
 
   jenkins:
-    image: jenkins/jenkins
+    build: .
     container_name: jenkins
     ports:
       - "8080:8080" #Jenkins UI 접근포트
