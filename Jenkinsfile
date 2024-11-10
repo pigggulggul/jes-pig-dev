@@ -46,9 +46,6 @@ pipeline {
                 if [ $(docker ps -a -q -f name=jenkins) ]; then
                     docker rm -f jenkins
                 fi
-                if [ $(docker ps -a -q -f name=nginx-container) ]; then
-                    docker rm -f nginx-container
-                fi
                 '''
             }
         }
