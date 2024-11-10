@@ -39,7 +39,7 @@ pipeline {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
 		sh 'docker-compose down'
-        sh 'docker-compose ps' // 꺼지고 docker-compose 확인
+        sh 'docker-compose ps -a' // 꺼지고 docker-compose 확인
 		sh 'docker-compose up -d --build'
             }
         }
