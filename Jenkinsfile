@@ -35,10 +35,23 @@ pipeline {
             }
         }
 
+
+        stage('Force Remove Existing Containers') {
+            steps {
+                // mysql-container가 이미 존재하면 강제 제거
+                sh '''
+                if [ $(docker ps -a -q -f name=mysql-container) ]; then
+                    docker rm -f mysql-container
+                fi
+                '''
+            }
+        }
+
         stage('Deploy with Docker Compose') {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
 		sh 'docker-compose down'
+        sh 'sleep 5' // 모든 컨테이너가 종료될 때까지 대기
 		sh 'docker-compose up -d --build'
             }
         }
