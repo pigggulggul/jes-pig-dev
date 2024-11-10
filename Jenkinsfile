@@ -40,7 +40,6 @@ pipeline {
                 // Jenkins를 제외한 다른 컨테이너와 네트워크 정리
                 sh '''
                 docker rm -f mysql-container || true
-                docker rm -f nginx-container || true
                 docker-compose down -v || true  # Jenkins 컨테이너가 아닌 서비스 종료
                 docker network prune -f || true
                 '''
