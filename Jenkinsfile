@@ -9,6 +9,32 @@ pipeline {
             }
         }
 
+        stage('Create backend .env File') {
+            steps {
+                sh '''
+                echo "NODE_ENV=$NODE_ENV" > backend/.env
+                echo "PORT=$PORT" >> backend/.env
+                echo "DB_HOST=$DB_HOST" >> backend/.env
+                echo "DB_USER=$DB_USER" >> backend/.env
+                echo "DB_PASSWORD=$DB_PASSWORD" >> backend/.env
+                echo "DB_DATABASE=$DB_DATABASE" >> backend/.env
+                echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" >> backend/.env
+                echo "MYSQL_DATABASE=$MYSQL_DATABASE" >> backend/.env
+                echo "MYSQL_USER=$MYSQL_USER" >> backend/.env
+                echo "MYSQL_PASSWORD=$MYSQL_PASSWORD" >> backend/.env
+                echo "JWT_SECRET=$JWT_SECRET" >> backend/.env
+                '''
+            }
+        }
+
+        stage('Create frontend .env.production File') {
+            steps {
+                sh '''
+                echo "VITE_REACT_API_URL=$VITE_REACT_API_URL" > frontend/.env.production
+                '''
+            }
+        }
+
         stage('Deploy with Docker Compose') {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
