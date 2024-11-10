@@ -41,7 +41,6 @@ pipeline {
                 sh '''
                 docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
                 docker rm -f mysql-container || true
-                docker rm -f jenkins || true
                 docker network prune -f || true
                 '''
             }
