@@ -40,7 +40,8 @@ pipeline {
                 // Jenkins를 제외한 다른 컨테이너와 네트워크 정리
                 sh '''
                 docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
-                docker rm -f mysql-container || true
+               	docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | xargs -r docker rm -f
+		docker rm -f mysql-container || true
                 docker network prune -f || true
                 '''
             }
@@ -49,8 +50,10 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
-        sh 'docker-compose ps -a' // 꺼지고 docker-compose 확인
-		sh 'docker-compose up -d --build'
+       		sh '''
+		docker-compose ps -a' // 꺼지고 docker-compose 확인
+		docker-compose up -d --build --no-deps jenkins
+		docker-compose up -d --build'''
             }
         }
     }
