@@ -39,7 +39,7 @@ pipeline {
             steps {
                 sh '''
 		# Jenkins 컨테이너가 아닌 서비스 종료
-                docker-compose down -v --remove-orphans || true
+                docker-compose down -v --remove-orphans backend mysql || true
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
 		fi
@@ -54,7 +54,7 @@ pipeline {
        		sh '''
 		export COMPOSE_PROJECT_NAME=pipeline_${BUILD_NUMBER}
 		docker-compose ps -a
-		docker-compose up -d --build backend mysql nginx
+		docker-compose up -d --build backend mysql
 		'''
             }
         }
