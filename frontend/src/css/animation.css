@@ -1,0 +1,96 @@
+.animation-modal {
+  animation: modal-animation 0.3s;
+}
+.animation-littleShining {
+  animation: littleShining 3s ease infinite;
+}
+.animation-push {
+  animation: push-animation 0.2s ease;
+}
+.animation-item {
+  animation: item-animation 1s ease;
+}
+.animation-clockRotate {
+  animation: clockRotate 3.5s ease-in-out infinite;
+}
+.animation-move-right-to-left {
+  animation: moveRightToLeft 120s infinite;
+}
+
+.animation-move-left-to-right {
+  animation: moveLeftToRight 120s infinite;
+}
+
+@keyframes modal-animation {
+  0% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes push-animation {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.9);
+  }
+}
+@keyframes item-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes clockRotate {
+  0%,
+  100% {
+    transform: rotate(6deg);
+  }
+
+  50% {
+    transform: rotate(-6deg);
+  }
+}
+@keyframes littleShining {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes moveRightToLeft {
+  0% {
+    opacity: 0.7;
+    right: -25%;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    right: 100%;
+  }
+}
+@keyframes moveLeftToRight {
+  0% {
+    opacity: 0.7;
+    left: -25%;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+  }
+}
