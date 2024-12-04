@@ -40,7 +40,9 @@ pipeline {
                 // Jenkins를 제외한 다른 컨테이너와 네트워크 정리
                 sh '''
                 docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
-                docker network prune -f || true
+                if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
+			docker rm -f mysql-container
+		docker network prune -f || true
                 '''
             }
         }
@@ -51,7 +53,8 @@ pipeline {
        		sh '''
 		docker-compose ps -a' // 꺼지고 docker-compose 확인
 		docker-compose up -d --build --no-deps jenkins
-		docker-compose up -d --build'''
+		docker-compose up -d --build
+		'''
             }
         }
     }
