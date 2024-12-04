@@ -42,6 +42,7 @@ pipeline {
                 docker-compose down -v --remove-orphans || true
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
+		fi
 		docker network prune -f || true
                 '''
             }
