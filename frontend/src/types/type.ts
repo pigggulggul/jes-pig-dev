@@ -7,3 +7,14 @@ export interface registUser {
   userPassword: string;
   nickname: string;
 }
+export interface brushType {
+  type: string;
+  color: string;
+  width: number;
+}
+export interface canvasType {
+  type: string;
+  width: number;
+  height: number;
+  backgroundColor: string;
+}
