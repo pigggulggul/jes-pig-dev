@@ -42,6 +42,7 @@ pipeline {
                 docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
+		fi
 		docker network prune -f || true
                 '''
             }
