@@ -68,7 +68,6 @@ services:
 
   jenkins:
     build: .
-    container_name: jenkins
     ports:
       - "8080:8080" #Jenkins UI 접근포트
       - "50000:50000"
@@ -79,10 +78,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     mem_limit: 512m
     networks:
-      - backend-network
+      - jenkins-network
 # 네트워크 설정: backend-network라는 이름의 브리지 네트워크를 정의
 networks:
   backend-network:
+    driver: bridge
+  jenkins-network:
     driver: bridge
 
 # MySQL 데이터를 호스트에 영구 저장하기 위한 볼륨 설정
