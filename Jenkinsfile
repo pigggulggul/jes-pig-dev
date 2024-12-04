@@ -37,9 +37,9 @@ pipeline {
 
         stage('Cleanup Existing Containers and Networks') {
             steps {
-                // Jenkins를 제외한 다른 컨테이너와 네트워크 정리
                 sh '''
-                docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
+		# Jenkins 컨테이너가 아닌 서비스 종료
+                docker-compose down -v 
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
 		fi
@@ -52,8 +52,8 @@ pipeline {
             steps {
                 // Docker Compose로 전체 애플리케이션을 빌드 및 배포
        		sh '''
+		export COMPOSE_PROJECT_NAME=pipeline_${BUILD_NUMBER}
 		docker-compose ps -a
-		docker-compose up -d --build --no-deps jenkins
 		docker-compose up -d --build
 		'''
             }
