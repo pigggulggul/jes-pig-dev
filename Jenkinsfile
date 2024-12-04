@@ -39,9 +39,12 @@ pipeline {
             steps {
                 sh '''
 		# Jenkins 컨테이너가 아닌 서비스 종료
-                docker-compose down -v 
+                docker-compose down -v --remove-orphans || true
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
+		fi
+		if docker ps -a --filter "name=nginx-container" --format "{{.ID}}" | grep -q .; then
+			docker rm -f nginx-container
 		fi
 		docker network prune -f || true
                 '''
