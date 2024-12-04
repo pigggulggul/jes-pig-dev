@@ -42,10 +42,6 @@ pipeline {
                 docker-compose down -v --remove-orphans || true
                 if docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | grep -q .; then
 			docker rm -f mysql-container
-		fi
-		if docker ps -a --filter "name=nginx-container" --format "{{.ID}}" | grep -q .; then
-			docker rm -f nginx-container
-		fi
 		docker network prune -f || true
                 '''
             }
@@ -57,7 +53,7 @@ pipeline {
        		sh '''
 		export COMPOSE_PROJECT_NAME=pipeline_${BUILD_NUMBER}
 		docker-compose ps -a
-		docker-compose up -d --build
+		docker-compose up -d --build backend mysql nginx
 		'''
             }
         }
