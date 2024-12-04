@@ -40,8 +40,6 @@ pipeline {
                 // Jenkins를 제외한 다른 컨테이너와 네트워크 정리
                 sh '''
                 docker-compose down -v  # Jenkins 컨테이너가 아닌 서비스 종료
-               	docker ps -a --filter "name=mysql-container" --format "{{.ID}}" | xargs -r docker rm -f
-		docker rm -f mysql-container || true
                 docker network prune -f || true
                 '''
             }
