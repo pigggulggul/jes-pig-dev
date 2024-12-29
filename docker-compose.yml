@@ -1,34 +1,34 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-container
-    volumes:
-      - mysql_data:/var/lib/mysql # MySQL 데이터를 영구 저장할 볼륨 설정
-    ports:
-      - "3306:3306" # MySQL 기본 포트 3306을 호스트에 노출
-    env_file: # 환경 변수를 .env 파일에서 불러옴
-      - ./backend/.env
-    restart: unless-stopped
-    networks:
-      - backend-network # backend-network 네트워크에 연결
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: mysql-container
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql # MySQL 데이터를 영구 저장할 볼륨 설정
+  #   ports:
+  #     - "3306:3306" # MySQL 기본 포트 3306을 호스트에 노출
+  #   env_file: # 환경 변수를 .env 파일에서 불러옴
+  #     - ./backend/.env
+  #   restart: unless-stopped
+  #   networks:
+  #     - backend-network # backend-network 네트워크에 연결
 
-  backend:
-    build:
-      context: ./backend # 백엔드의 Dockerfile이 위치한 경로
-      dockerfile: Dockerfile # 사용할 Dockerfile
-    working_dir: /app # 컨테이너 내에서 작업할 디렉토리
-    volumes:
-      - ./backend:/app # 호스트의 backend 디렉토리를 컨테이너의 /app에 연결
-      - /app/node_modules # node_modules는 호스트와 공유하지 않도록 설정 (컨테이너 내부에서만 관리)
-    ports:
-      - "5000:5000" # 백엔드 서버의 포트 3000을 호스트에 노출
-    env_file:
-      - ./backend/.env # 백엔드의 환경 변수 파일 (.env) 설정
-    command: bash -c "npm install && npm start" # npm install 후 백엔드 서버 시작
-    depends_on:
-      - mysql # backend 서비스는 mysql 서비스가 시작된 후 실행
-    networks:
-      - backend-network # backend-network 네트워크에 연결
+  # backend:
+  #   build:
+  #     context: ./backend # 백엔드의 Dockerfile이 위치한 경로
+  #     dockerfile: Dockerfile # 사용할 Dockerfile
+  #   working_dir: /app # 컨테이너 내에서 작업할 디렉토리
+  #   volumes:
+  #     - ./backend:/app # 호스트의 backend 디렉토리를 컨테이너의 /app에 연결
+  #     - /app/node_modules # node_modules는 호스트와 공유하지 않도록 설정 (컨테이너 내부에서만 관리)
+  #   ports:
+  #     - "5000:5000" # 백엔드 서버의 포트 3000을 호스트에 노출
+  #   env_file:
+  #     - ./backend/.env # 백엔드의 환경 변수 파일 (.env) 설정
+  #   command: bash -c "npm install && npm start" # npm install 후 백엔드 서버 시작
+  #   depends_on:
+  #     - mysql # backend 서비스는 mysql 서비스가 시작된 후 실행
+  #   networks:
+  #     - backend-network # backend-network 네트워크에 연결
 
   # frontend:
   #   build:
