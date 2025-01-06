@@ -21,11 +21,27 @@
 body {
   font-family: "BitFont", sans-serif; /* 지정한 폰트 사용, 폴백으로 sans-serif 추가 */
   color: #363636;
+  font-size: small;
+}
+.font-insta {
+  font-family: "NotoSans", "Roboto";
 }
 
 @font-face {
   font-family: "BitFont"; /* 사용할 이름 정의 */
   src: url("../fonts/DNFBitBitv2.ttf") format("truetype"); /* 폰트 파일 경로와 형식 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "NotoSans"; /* 사용할 이름 정의 */
+  src: url("../fonts/NotoSansKR.ttf") format("truetype"); /* 폰트 파일 경로와 형식 */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Roboto"; /* 사용할 이름 정의 */
+  src: url("../fonts/Roboto.ttf") format("truetype"); /* 폰트 파일 경로와 형식 */
   font-weight: normal;
   font-style: normal;
 }
@@ -41,12 +57,12 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #6a55ec; /* 스크롤바의 색상을 지정합니다. */
+  background-color: #ffacae; /* 스크롤바의 색상을 지정합니다. */
   border-radius: 20px; /* 스크롤바 모서리를 둥글게 만듭니다. */
 }
 
 .scroll-pink::-webkit-scrollbar-thumb {
-  background-color: #6a55ec; /* 스크롤바의 색상을 지정합니다. */
+  background-color: #ffacae; /* 스크롤바의 색상을 지정합니다. */
   border-radius: 3px; /* 스크롤바 모서리를 둥글게 만듭니다. */
 }
 
