@@ -30,7 +30,7 @@ export default function ConceptMakerPage() {
   const profileImgRef = useRef<HTMLInputElement>(null);
 
   const [storyPeople, setStoryPeople] = useState<StoryPeopleProps[]>([
-    { imgSrc: profileImgDefault, nickname: "test1", storyStatus: "unread" },
+    { imgSrc: profileImgDefault, nickname: "게스트", storyStatus: "unread" },
   ]);
   const storyPeopleFileRef = useRef<RefObject<HTMLInputElement>[]>([]);
 
@@ -38,6 +38,7 @@ export default function ConceptMakerPage() {
     useState<string>(profileImgDefault);
   const [instaPostNick, setInstaPostNick] = useState<string>("");
   const [instaPost, setInstaPost] = useState<string>("");
+  const [instaPostContent, setInstaPostContent] = useState<string>("");
   const instaProfileRef = useRef<HTMLInputElement>(null);
   const instaPostRef = useRef<HTMLInputElement>(null);
 
@@ -58,6 +59,9 @@ export default function ConceptMakerPage() {
   };
   const onChangePostNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInstaPostNick(e.target.value);
+  };
+  const onChangePostContent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInstaPostContent(e.target.value);
   };
   const onChangePostReaction = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -99,7 +103,7 @@ export default function ConceptMakerPage() {
       ...prev,
       {
         imgSrc: profileImgDefault,
-        nickname: "test1",
+        nickname: "게스트",
         storyStatus: "unread",
       },
     ]);
@@ -307,7 +311,7 @@ export default function ConceptMakerPage() {
                           }}
                         />
                         <div
-                          className="border border-gray-300 bg-gray-100 p-2 ms-1 rounded-md cursor-pointer hover:bg-gray-200"
+                          className="border border-gray-300 bg-gray-100 px-2 py-1 ms-1 rounded-md cursor-pointer hover:bg-gray-200"
                           onClick={() => {
                             onClickHandleProfile(instaPostRef);
                           }}
@@ -318,7 +322,7 @@ export default function ConceptMakerPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <div className="flex items-center">
+                    <div className="flex items-center mt-2">
                       <div className="flex items-center me-1">
                         <IoMdHeartEmpty />
                         <input
@@ -353,6 +357,16 @@ export default function ConceptMakerPage() {
                         />
                       </div>
                     </div>
+                  </div>
+                  <div>
+                    <p className="w-full text-start mt-2">내용 입력</p>
+                    <input
+                      className="w-full mt-1 border border-gray-200"
+                      type="text"
+                      onChange={(e) => {
+                        onChangePostContent(e);
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -432,21 +446,21 @@ export default function ConceptMakerPage() {
               src={instaPost}
               style={{ aspectRatio: 1 / 1 }}
             />
-            <div className="w-full h-[8%] flex justify-between py-[1px] px-2 bg-white">
+            <div className="w-full h-[5%] flex justify-between py-[1px] px-2 bg-white">
               <div className="flex items-center">
-                <div className="flex items-center me-1">
+                <div className="flex items-center me-2">
                   <IoMdHeart className="color-text-red1" />
                   <p className="text-[8px] mx-[2px]">
                     {formatNumberInsta(instaPostReaction.heart)}
                   </p>
                 </div>
-                <div className="flex items-center me-1">
+                <div className="flex items-center me-2">
                   <FaRegComment className="me-[2px]" />
                   <p className="text-[8px] mx-[2px]">
                     {formatNumberInsta(instaPostReaction.comment)}
                   </p>
                 </div>
-                <div className="flex items-center me-1">
+                <div className="flex items-center me-2">
                   <IoPaperPlaneOutline />
                   <p className="text-[8px] mx-[2px]">
                     {formatNumberInsta(instaPostReaction.dm)}
@@ -458,9 +472,9 @@ export default function ConceptMakerPage() {
               </div>
             </div>
             <div className="max-h-[10%] text-[6px] text-start px-2">
-              <p>nick_name</p>
+              <p className="font-bold">{instaPostNick}</p>
               <div className="flex">
-                <p>content....</p>
+                <p>{instaPostContent}</p>
                 <p className="text-gray-500 mx-1">더 보기</p>
               </div>
               <p className="py-[2px] text-gray-500">5일 전</p>
