@@ -28,10 +28,13 @@ import saveAs from "file-saver";
 import ImageFrame from "../components/conceptmaker/ImageFrame";
 import TypeInstaFooter from "../components/conceptmaker/TypeInstaFooter";
 import ImageResizeUI from "../components/conceptmaker/ImageResizeUI";
+import img_profileImgDefault from "/src/assets/images/insta_profile_default.webp";
+import img_whiteBg from "/src/assets/images/white-background.jpg";
+import img_conceptInsta from "/src/assets/images/concept_type_insta.png";
 
 export default function ConceptMakerPage() {
   const mainTextSize = 8;
-  const profileImgDefault = "/src/assets/images/insta_profile_default.webp";
+  const profileImgDefault = img_profileImgDefault;
   const mainCanvasRef = useRef<HTMLDivElement>(null);
   const [makerType, setMakerType] = useState<SideBarItemType>("type");
   const [profileImg, setProfileImg] = useState<string>(profileImgDefault);
@@ -57,9 +60,7 @@ export default function ConceptMakerPage() {
   const [instaPostProfile, setInstaPostProfile] =
     useState<string>(profileImgDefault);
   const [instaPostNick, setInstaPostNick] = useState<string>("");
-  const [instaPost, setInstaPost] = useState<string>(
-    "/src/assets/images/white-background.jpg"
-  );
+  const [instaPost, setInstaPost] = useState<string>(img_whiteBg);
   const [instaPostImage, setInstaPostImage] = useState<ImagePosType>({
     x: 0,
     y: 0,
@@ -217,11 +218,7 @@ export default function ConceptMakerPage() {
                 className="w-[30%] h-auto my-2 flex flex-col items-center cursor-pointer"
                 onClick={() => {}}
               >
-                <img
-                  className="w-20 h-32"
-                  src="/src/assets/images/concept_type_insta.png"
-                  alt=""
-                />
+                <img className="w-20 h-32" src={img_conceptInsta} alt="" />
                 <p className="my-1">인스타그램</p>
               </li>
             </ul>
