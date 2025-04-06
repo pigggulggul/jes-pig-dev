@@ -1,4 +1,9 @@
 @tailwind base;
+@layer base {
+  img {
+    @apply inline-block;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
@@ -44,6 +49,10 @@ body {
   src: url("../fonts/Roboto.ttf") format("truetype"); /* 폰트 파일 경로와 형식 */
   font-weight: normal;
   font-style: normal;
+}
+
+.frame-image {
+  image-rendering: optimizeQuality;
 }
 
 /* 스크롤 */

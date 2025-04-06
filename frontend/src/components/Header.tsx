@@ -14,6 +14,9 @@ export default function Header() {
         <Link to="/componentmaker" className="text-xl cursor-pointer">
           컨셉 메이커
         </Link>
+        <Link to="/possiblecake" className="text-xl mx-8 cursor-pointer">
+          가능 케이크
+        </Link>
       </div>
       <div className="flex items-center">
         <p className="text-2xl mx-8 px-4 cursor-pointer color-text-main">

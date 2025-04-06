@@ -6,12 +6,13 @@ import {
   StoryPeopleProps,
   StoryStatusType,
 } from "../types/type";
+import { ImagePosType } from "../types/conceptmaker/comceptMakerUi";
 import InstaStoryThumb from "../components/InstaStoryThumb";
 import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
 import { FaRegComment } from "react-icons/fa6";
 import { IoPaperPlaneOutline } from "react-icons/io5";
-import { GoBookmark, GoBookmarkFill } from "react-icons/go";
-import { LuPencilLine } from "react-icons/lu";
+import { GoBookmark } from "react-icons/go";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import NewButton from "../components/NewButton";
 import React from "react";
 import {
@@ -21,24 +22,55 @@ import {
   onClickHandleProfile,
 } from "../util/fileUpload";
 import { formatNumberInsta } from "../util/format";
+import TypeInstaHeader from "../components/conceptmaker/TypeInstaHeader";
+import html2canvas from "html2canvas";
+import saveAs from "file-saver";
+import ImageFrame from "../components/conceptmaker/ImageFrame";
+import TypeInstaFooter from "../components/conceptmaker/TypeInstaFooter";
+import ImageResizeUI from "../components/conceptmaker/ImageResizeUI";
 
 export default function ConceptMakerPage() {
+  const mainTextSize = 8;
   const profileImgDefault = "/src/assets/images/insta_profile_default.webp";
+  const mainCanvasRef = useRef<HTMLDivElement>(null);
   const [makerType, setMakerType] = useState<SideBarItemType>("type");
   const [profileImg, setProfileImg] = useState<string>(profileImgDefault);
-  const [profileNickname, setProfileNickname] = useState<string>("");
+  const [, setProfileNickname] = useState<string>("");
+  const [profileSize, setProfileSize] = useState<ImagePosType>({
+    x: 0,
+    y: 0,
+    zoom: 100,
+  });
   const profileImgRef = useRef<HTMLInputElement>(null);
 
   const [storyPeople, setStoryPeople] = useState<StoryPeopleProps[]>([
-    { imgSrc: profileImgDefault, nickname: "게스트", storyStatus: "unread" },
+    {
+      imgSrc: profileImgDefault,
+      nickname: "게스트",
+      storyStatus: "unread",
+      showSizeSettings: false,
+      imageSize: { x: 0, y: 0, zoom: 100 },
+    },
   ]);
   const storyPeopleFileRef = useRef<RefObject<HTMLInputElement>[]>([]);
 
   const [instaPostProfile, setInstaPostProfile] =
     useState<string>(profileImgDefault);
   const [instaPostNick, setInstaPostNick] = useState<string>("");
-  const [instaPost, setInstaPost] = useState<string>("");
+  const [instaPost, setInstaPost] = useState<string>(
+    "/src/assets/images/white-background.jpg"
+  );
+  const [instaPostImage, setInstaPostImage] = useState<ImagePosType>({
+    x: 0,
+    y: 0,
+    zoom: 100,
+  });
   const [instaPostContent, setInstaPostContent] = useState<string>("");
+  const [instaProfileSize, setInstaProfileSize] = useState<ImagePosType>({
+    x: 0,
+    y: 0,
+    zoom: 100,
+  });
   const instaProfileRef = useRef<HTMLInputElement>(null);
   const instaPostRef = useRef<HTMLInputElement>(null);
 
@@ -54,14 +86,43 @@ export default function ConceptMakerPage() {
       );
   }, [storyPeople]);
 
+  // 이미지 크기 설정 UI 토글 함수
+  const toggleSizeSettings = (index: number) => {
+    const newStoryPeople = [...storyPeople];
+    newStoryPeople[index].showSizeSettings =
+      !newStoryPeople[index].showSizeSettings;
+    setStoryPeople(newStoryPeople);
+  };
+
+  // 이미지 크기 변경 처리 함수
+  const handleSizeChange = (
+    index: number,
+    dimension: "x" | "y" | "zoom",
+    value: number
+  ) => {
+    const newStoryPeople = [...storyPeople];
+    newStoryPeople[index].imageSize[dimension] = value;
+    setStoryPeople(newStoryPeople);
+  };
+
   const onChangeProfileNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfileNickname(e.target.value);
   };
   const onChangePostNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInstaPostNick(e.target.value);
   };
-  const onChangePostContent = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInstaPostContent(e.target.value);
+
+  const onChangePostContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    const lines = text.split("\n");
+    if (lines.length <= 4) {
+      // 기존 상태 업데이트 로직
+      setInstaPostContent(text);
+    } else {
+      // 5줄까지만 유지
+      const limitedText = lines.slice(0, 5).join("\n");
+      setInstaPostContent(limitedText);
+    }
   };
   const onChangePostReaction = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -71,6 +132,31 @@ export default function ConceptMakerPage() {
       ...prevState,
       [type]: Number(e.target.value),
     }));
+  };
+
+  const downloadImage = async () => {
+    if (!mainCanvasRef.current) return;
+    try {
+      const imageCanvas = mainCanvasRef.current;
+      const canvas = await html2canvas(imageCanvas, {
+        scale: 4,
+        useCORS: true, // CORS 허용
+        allowTaint: true, // 외부 리소스 허용
+        imageTimeout: 0, // 이미지 로딩 타임아웃 비활성화
+      });
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob !== null) {
+            saveAs(blob, "result.png");
+          }
+        },
+        "image/png",
+        1.0
+      );
+    } catch (error) {
+      console.error("Error converting div to image:", error);
+    }
   };
 
   useEffect(() => {
@@ -105,6 +191,8 @@ export default function ConceptMakerPage() {
         imgSrc: profileImgDefault,
         nickname: "게스트",
         storyStatus: "unread",
+        showSizeSettings: false,
+        imageSize: { x: 0, y: 0, zoom: 100 },
       },
     ]);
   };
@@ -157,12 +245,8 @@ export default function ConceptMakerPage() {
                     />
                   </div>
                   <img
-                    className="w-full my-2 cursor-pointer rounded-full"
-                    src={
-                      profileImg
-                        ? profileImg
-                        : "/src/assets/images/insta_profile_default.webp"
-                    }
+                    className="w-full my-2 cursor-pointer rounded-full object-cover"
+                    src={profileImg ? profileImg : profileImgDefault}
                     style={{ aspectRatio: 1 / 1 }}
                     alt=""
                     onClick={() => {
@@ -178,71 +262,154 @@ export default function ConceptMakerPage() {
                     onChange={onChangeProfileNickname}
                   />
                 </div>
+                <ImageResizeUI
+                  reSize={profileSize}
+                  setImageState={setProfileSize}
+                />
               </div>
               <p className="w-full text-start mt-4">스토리 인원 설정</p>
               <div className="w-full flex flex-col items-center justify-center">
                 <ul className="w-full">
                   {storyPeople.map((item, index) => {
                     return (
-                      <li className="relative w-full h-28 bg-white rounded-md border flex py-4 px-2 my-4">
-                        <div className="w-[30%]">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            ref={storyPeopleFileRef.current[index]}
-                            onChange={(e) =>
-                              handleStoryFileUpload(
-                                e,
-                                index,
-                                storyPeople,
-                                setStoryPeople
-                              )
-                            }
-                            className="hidden"
-                          />
-                          <img
-                            className="rounded-full h-full object-cover cursor-pointer"
-                            src={item.imgSrc}
-                            style={{ aspectRatio: 1 / 1 }}
-                            alt=""
-                            onClick={() => {
-                              onClickHandleMultiProfile(
-                                storyPeopleFileRef,
-                                index
-                              );
-                            }}
-                          />
-                        </div>
-                        <div className="w-[70%] flex flex-col justify-center items-start ps-4">
-                          <p
-                            className="absolute top-0 right-1 cursor-pointer"
-                            onClick={() => deleteStoryPeople(index)}
-                          >
-                            x
-                          </p>
-                          <div className="flex my-2 items-center">
-                            <p className="w-[30%]">닉네임:</p>
+                      <li className="relative w-full bg-white rounded-md border py-4 px-2 my-4">
+                        <div className="flex">
+                          <div className="w-[30%]">
                             <input
-                              className="w-[70%] border border-gray-200 rounded-md py-1"
-                              type="text"
-                              value={item.nickname}
-                              onChange={(e) => {
-                                onChangeStoryNick(e, index);
+                              type="file"
+                              accept="image/*"
+                              ref={storyPeopleFileRef.current[index]}
+                              onChange={(e) =>
+                                handleStoryFileUpload(
+                                  e,
+                                  index,
+                                  storyPeople,
+                                  setStoryPeople
+                                )
+                              }
+                              className="hidden"
+                            />
+                            <img
+                              className="rounded-full h-full object-cover cursor-pointer"
+                              src={item.imgSrc}
+                              style={{ aspectRatio: 1 / 1 }}
+                              alt=""
+                              onClick={() => {
+                                onClickHandleMultiProfile(
+                                  storyPeopleFileRef,
+                                  index
+                                );
                               }}
                             />
                           </div>
-                          <div className="flex items-center">
-                            <p className="w-[25%]">상태:</p>
-                            <select
-                              value={item.storyStatus}
-                              onChange={(e) => onChangeStoryStatus(e, index)}
-                              className="block w-[80%] mx-1 px-1 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          <div className="w-[70%] flex flex-col justify-center items-start ps-4">
+                            <p
+                              className="absolute top-0 right-1 cursor-pointer"
+                              onClick={() => deleteStoryPeople(index)}
                             >
-                              <option value="unread">안읽음</option>
-                              <option value="read">읽음</option>
-                              <option value="friend">친한 친구 공개</option>
-                            </select>
+                              x
+                            </p>
+                            <div className="flex my-2 items-center">
+                              <p className="w-[30%]">닉네임:</p>
+                              <input
+                                className="w-[70%] border border-gray-200 rounded-md py-1"
+                                type="text"
+                                value={item.nickname}
+                                onChange={(e) => {
+                                  onChangeStoryNick(e, index);
+                                }}
+                              />
+                            </div>
+                            <div className="flex items-center">
+                              <p className="w-[25%]">상태:</p>
+                              <select
+                                value={item.storyStatus}
+                                onChange={(e) => onChangeStoryStatus(e, index)}
+                                className="block w-[80%] mx-1 px-1 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="unread">안읽음</option>
+                                <option value="read">읽음</option>
+                                <option value="friend">친한 친구 공개</option>
+                              </select>
+                            </div>
                           </div>
+                        </div>
+                        <div className="w-full">
+                          <p
+                            className="w-full text-start my-2 cursor-pointer"
+                            onClick={() => toggleSizeSettings(index)}
+                          >
+                            이미지 크기 설정 {item.showSizeSettings ? "▼" : ">"}
+                          </p>
+
+                          {/* 크기 설정 UI - 토글 상태에 따라 표시 */}
+                          {item.showSizeSettings && (
+                            <div className="p-3 border border-gray-200 rounded-md my-2">
+                              <div className="flex items-center mb-2">
+                                <label className="w-[30%] text-sm">너비:</label>
+                                <input
+                                  type="range"
+                                  min="-100"
+                                  max="100"
+                                  value={item.imageSize.x}
+                                  onChange={(e) =>
+                                    handleSizeChange(
+                                      index,
+                                      "x",
+                                      parseInt(e.target.value)
+                                    )
+                                  }
+                                  className="w-[50%] mr-2"
+                                />
+                                <span className="w-[20%] text-sm">
+                                  {item.imageSize.x}%
+                                </span>
+                              </div>
+                              <div className="flex items-center">
+                                <label className="w-[30%] text-sm mb-2">
+                                  높이:
+                                </label>
+                                <input
+                                  type="range"
+                                  min="-100"
+                                  max="100"
+                                  value={item.imageSize.y}
+                                  onChange={(e) =>
+                                    handleSizeChange(
+                                      index,
+                                      "y",
+                                      parseInt(e.target.value)
+                                    )
+                                  }
+                                  className="w-[50%] mr-2"
+                                />
+                                <span className="w-[20%] text-sm">
+                                  {item.imageSize.y}%
+                                </span>
+                              </div>
+                              <div className="flex items-center">
+                                <label className="w-[30%] text-sm">비율:</label>
+                                <input
+                                  type="range"
+                                  min="-100"
+                                  max="500"
+                                  step={5}
+                                  value={item.imageSize.zoom}
+                                  onChange={(e) =>
+                                    handleSizeChange(
+                                      index,
+                                      "zoom",
+                                      Number(e.target.value)
+                                    )
+                                  }
+                                  className="w-[50%] mr-2"
+                                />
+                                <span className="w-[20%] text-sm">
+                                  {item.imageSize.zoom}%
+                                </span>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </li>
                     );
@@ -321,6 +488,20 @@ export default function ConceptMakerPage() {
                       </div>
                     </div>
                   </div>
+                  <div className="text-start">
+                    <p>프로필 설정</p>
+                  </div>
+                  <ImageResizeUI
+                    reSize={instaProfileSize}
+                    setImageState={setInstaProfileSize}
+                  />
+                  <div className="text-start">
+                    <p>게시글 설정</p>
+                  </div>
+                  <ImageResizeUI
+                    reSize={instaPostImage}
+                    setImageState={setInstaPostImage}
+                  />
                   <div className="flex justify-between items-center">
                     <div className="flex items-center mt-2">
                       <div className="flex items-center me-1">
@@ -360,12 +541,10 @@ export default function ConceptMakerPage() {
                   </div>
                   <div>
                     <p className="w-full text-start mt-2">내용 입력</p>
-                    <input
-                      className="w-full mt-1 border border-gray-200"
-                      type="text"
-                      onChange={(e) => {
-                        onChangePostContent(e);
-                      }}
+                    <textarea
+                      className="w-full mt-1 p-2 border border-gray-200 min-h-[100px] resize-y"
+                      onChange={(e) => onChangePostContent(e)}
+                      value={instaPostContent}
                     />
                   </div>
                 </div>
@@ -377,7 +556,7 @@ export default function ConceptMakerPage() {
     );
   };
   return (
-    <section className="h-[93%] flex">
+    <section className="h-[98%] flex">
       <div className="w-[25%] flex bg-gray-50">
         <div className="w-[15%] bg-gray-200 flex flex-col">
           <TypeButton
@@ -401,18 +580,31 @@ export default function ConceptMakerPage() {
         </div>
         {sidebarComponent()}
       </div>
-      <div className="relative w-[75%] h-full flex-col items-center justify-center font-insta">
-        <div className="relative w-full h-[90%] py-4 flex items-center justify-center">
+      <div className="relative w-[75%] h-full flex-col items-center justify-center font-insta overflow-y-scroll">
+        <div className="absolute bottom-[10%] right-[6%] z-10">
+          <NewButton
+            label="다운로드"
+            width={120}
+            backgroundColor="#ffacae"
+            onClick={() => {
+              downloadImage();
+            }}
+          />
+        </div>
+        <div className="relative w-full h-[90%] py-4 flex items-center justify-center ">
           <div
+            ref={mainCanvasRef}
             className="relative h-full bg-white border"
             style={{ aspectRatio: 9 / 16 }}
           >
+            <TypeInstaHeader />
             <ul className="relative w-full h-[15%] bg-white flex justify-start items-center">
               <InstaStoryThumb
                 width={20}
                 host
                 nickname="내 스토리"
                 imgSrc={profileImg}
+                imageSize={profileSize}
               />
               {/* 컴포넌트 추가를 하면 나오는 창 */}
               {storyPeople.map((item) => {
@@ -422,35 +614,49 @@ export default function ConceptMakerPage() {
                     nickname={item.nickname}
                     imgSrc={item.imgSrc}
                     status={item.storyStatus}
+                    imageSize={item.imageSize}
                   />
                 );
               })}
             </ul>
-            <div className="w-full h-[10%] bg-white border-y border-gray-100">
-              <div className="flex h-full items-center px-2">
-                <img
-                  className="h-[70%] bg-gray-300 rounded-full"
-                  style={{ aspectRatio: 1 / 1 }}
-                  src={instaPostProfile}
-                />
-                <div className="flex flex-col justify-center px-2">
-                  <p className="w-full text-start text-[7px] font-bold">
-                    {instaPostNick ? instaPostNick : "게시글 설정을 해주세요"}
-                  </p>
-                  <p className="w-full text-start text-[6px]">위치</p>
+            <div className="w-full h-[6%] bg-white border-y border-gray-100">
+              <div className="flex h-full items-center px-2 justify-between">
+                <div className="relative flex h-full items-center">
+                  <div className="relative w-6 h-6 bg-gray-300 rounded-full overflow-hidden">
+                    <ImageFrame
+                      image={instaPostProfile}
+                      resize={instaProfileSize}
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center px-2">
+                    <p
+                      className="w-full text-start text-[7px] font-bold"
+                      style={{ fontSize: mainTextSize }}
+                    >
+                      {instaPostNick ? instaPostNick : "게시글 설정을 해주세요"}
+                    </p>
+                    <p
+                      className="w-full text-start"
+                      style={{ fontSize: mainTextSize }}
+                    >
+                      위치
+                    </p>
+                  </div>
                 </div>
+                <BsThreeDotsVertical />
               </div>
             </div>
-            <img
-              className="w-full bg-red-50 object-cover"
-              src={instaPost}
+            <div
+              className="relative w-full h-[50%] bg-white object-cover overflow-hidden"
               style={{ aspectRatio: 1 / 1 }}
-            />
+            >
+              <ImageFrame image={instaPost} resize={instaPostImage} />
+            </div>
             <div className="w-full h-[5%] flex justify-between py-[1px] px-2 bg-white">
               <div className="flex items-center">
-                <div className="flex items-center me-2">
-                  <IoMdHeart className="color-text-red1" />
-                  <p className="text-[8px] mx-[2px]">
+                <div className="flex items-center me-2 ">
+                  <IoMdHeart className="color-text-red1 " />
+                  <p className="text-[8px] mx-[2px] ">
                     {formatNumberInsta(instaPostReaction.heart)}
                   </p>
                 </div>
@@ -471,13 +677,27 @@ export default function ConceptMakerPage() {
                 <GoBookmark />
               </div>
             </div>
-            <div className="max-h-[10%] text-[6px] text-start px-2">
-              <p className="font-bold">{instaPostNick}</p>
-              <div className="flex">
-                <p>{instaPostContent}</p>
-                <p className="text-gray-500 mx-1">더 보기</p>
+            <div className="h-[10%] text-[6px] text-start px-2">
+              <p className="font-bold" style={{ fontSize: mainTextSize }}>
+                {instaPostNick}
+              </p>
+              <div className="relative whitespace-pre-wrap ">
+                <p
+                  className="overflow-hidden text-ellipsis line-clamp-4 break-all"
+                  style={{ fontSize: mainTextSize }}
+                >
+                  {instaPostContent}
+                </p>
               </div>
-              <p className="py-[2px] text-gray-500">5일 전</p>
+              <p
+                className="py-[2px] text-gray-500"
+                style={{ fontSize: mainTextSize }}
+              >
+                1일 전
+              </p>
+            </div>
+            <div className="h-[7%] flex items-center justify-center">
+              <TypeInstaFooter image={profileImg} resize={profileSize} />
             </div>
           </div>
         </div>

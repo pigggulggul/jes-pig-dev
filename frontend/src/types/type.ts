@@ -1,3 +1,5 @@
+import { ImagePosType } from "./conceptmaker/comceptMakerUi";
+
 export interface loginUser {
   userId: string;
   userPassword: string;
@@ -25,6 +27,8 @@ export interface StoryPeopleProps {
   imgSrc?: string;
   nickname: string;
   storyStatus: StoryStatusType;
+  showSizeSettings: boolean;
+  imageSize: ImagePosType;
 }
 export type StoryStatusType = "read" | "unread" | "friend";
 
